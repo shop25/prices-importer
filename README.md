@@ -6,11 +6,11 @@ The Importer requires an external PSR7-compliant HTTP Client such as Guzzle.
 
 ```php
 
-$csv = new \S25\PricePusher\CsvFile();
+$csv = new \S25\PricesImporter\CsvFile();
 
-$csv->add('bransslug1', 'RAWPARTNUMBER1', 12.3 'CUR');
-$csv->add('bransslug2', 'RAWPARTNUMBER2', 45.6 'REN');
-$csv->add('bransslug3', 'RAWPARTNUMBER3', 78.9 'CYC');    
+$csv->add(['bransslug1', 'RAWPARTNUMBER1'], 12.3 'CUR');
+$csv->add(['bransslug2', 'RAWPARTNUMBER2'], 45.6 'REN', 10);
+$csv->add('guid3', 78.9 'CYC');
     
 $importer = new \S25\PricesImporter\Importer(
     'http://service.url/import',
@@ -18,6 +18,14 @@ $importer = new \S25\PricesImporter\Importer(
     new \GuzzleHttpHttpFactory(),
 );
 
-$importer->send($csv);
+try {
+    $importer->send(
+        'price-list-key',
+        $csv,
+        'Optional source filename'
+    );
+} catch (\RuntimeException $e) {
+    // Something went wrong
+}
 
 ```

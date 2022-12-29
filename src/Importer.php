@@ -5,6 +5,7 @@ namespace S25\PricesImporter;
 use GuzzleHttp\Psr7\FnStream;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Utils;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
@@ -24,7 +25,7 @@ class Importer
      *
      * @return void
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function send(string $destination, CsvFile $csv, string $source): void
     {

@@ -28,16 +28,19 @@ class CsvFile
         }
 
         // Write the header right away
-        $this->put(['brand', 'oem', 'price', 'valuta']);
+        $this->put(['brand', 'number', 'price', 'currency', 'pieces']);
     }
 
-    public function add(
-        string $brandSlug,
-        string $rawNumber,
-        float $price,
-        string $currencyCode,
-    ): void {
-        $this->put([$brandSlug, $rawNumber, $price, $currencyCode]);
+    /**
+     * @param array{string, string}|string $product - [$brandSlug, $rawNumber] | $guid
+     * @param float $price
+     * @param string $currencyCode
+     * @param int $piecesPerPack
+     * @return void
+     */
+    public function add(string|array $product, float $price, string $currencyCode, int $piecesPerPack = 1): void {
+        [$brandSlug, $rawNumber] = is_array($product) ? $product : ['', $product];
+        $this->put([$brandSlug, $rawNumber, $price, $currencyCode, $piecesPerPack]);
     }
 
     /**
