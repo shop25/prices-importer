@@ -4,6 +4,12 @@ namespace S25\PricesImporter;
 
 class CsvFile
 {
+    public const COLUMN_BRAND = 'brand';
+    public const COLUMN_NUMBER = 'number';
+    public const COLUMN_PRICE = 'price';
+    public const COLUMN_CURRENCY = 'currency';
+    public const COLUMN_PIECES = 'pieces';
+
     protected string $filename;
 
     /** @var resource|false */
@@ -11,6 +17,11 @@ class CsvFile
 
     public function __construct(
         protected string $separator = ',',
+        protected array $columns = [
+            self::COLUMN_NUMBER   => 'oem',
+            self::COLUMN_CURRENCY => 'valuta',
+            self::COLUMN_PIECES   => 'qt'
+        ]
     ) {
         // Create a temporary csv file
 
@@ -28,7 +39,13 @@ class CsvFile
         }
 
         // Write the header right away
-        $this->put(['brand', 'number', 'price', 'currency', 'pieces']);
+        $this->put([
+            $columns[self::COLUMN_BRAND] ?? self::COLUMN_BRAND,
+            $columns[self::COLUMN_NUMBER] ?? self::COLUMN_NUMBER,
+            $columns[self::COLUMN_PRICE] ?? self::COLUMN_PRICE,
+            $columns[self::COLUMN_CURRENCY] ?? self::COLUMN_CURRENCY,
+            $columns[self::COLUMN_PIECES] ?? self::COLUMN_PIECES,
+        ]);
     }
 
     /**
@@ -38,7 +55,8 @@ class CsvFile
      * @param int $piecesPerPack
      * @return void
      */
-    public function add(string|array $product, float $price, string $currencyCode, int $piecesPerPack = 1): void {
+    public function add(string|array $product, float $price, string $currencyCode, int $piecesPerPack = 1): void
+    {
         [$brandSlug, $rawNumber] = is_array($product) ? $product : ['', $product];
         $this->put([$brandSlug, $rawNumber, $price, $currencyCode, $piecesPerPack]);
     }
