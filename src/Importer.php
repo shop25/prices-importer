@@ -18,6 +18,27 @@ class Importer
     ) {
     }
 
+    public function check(string $destination): bool
+    {
+        $url = rtrim($this->endpoint, "/") .
+            "/price-list?" .
+            http_build_query([
+                'api_key' => $destination
+            ]);
+
+        $request = $this->requestFactory
+            ->createRequest('GET', $url)
+            ->withHeader('Accept', 'application/json');
+
+        $response = $this->client->sendRequest($request);
+
+        return match ($response->getStatusCode()) {
+            200 => true,
+            404 => false,
+            default => throw new \RuntimeException('HTTP: ' . $response->getReasonPhrase()),
+        };
+    }
+
     /**
      * @param string $destination
      * @param CsvFile $csv
@@ -57,7 +78,7 @@ class Importer
         $response = $this->client->sendRequest($request);
 
         if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException($response->getReasonPhrase());
+            throw new \RuntimeException('HTTP: ' . $response->getReasonPhrase());
         }
     }
 }
